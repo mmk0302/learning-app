@@ -1,6 +1,6 @@
 import { db } from "@/db";
 import { courses, sections, videos } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, asc } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import CourseForm from "@/components/admin/CourseForm";
 import SectionManager from "@/components/admin/SectionManager";
@@ -20,10 +20,10 @@ export default async function EditCoursePage({ params }: Props) {
 
   const courseSections = await db.query.sections.findMany({
     where: eq(sections.courseId, courseId),
-    orderBy: (sections, { asc }) => [asc(sections.order)],
+    orderBy: [asc(sections.order)],
     with: {
       videos: {
-        orderBy: (videos, { asc }) => [asc(videos.order)],
+        orderBy: [asc(videos.order)],
       },
     },
   });

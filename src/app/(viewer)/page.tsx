@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { db } from "@/db";
 import { courses, courseAccess } from "@/db/schema";
-import { eq, and } from "drizzle-orm";
+import { eq, and, asc } from "drizzle-orm";
 import CourseCard from "@/components/viewer/CourseCard";
 
 export default async function HomePage() {
@@ -10,7 +10,7 @@ export default async function HomePage() {
 
   const allCourses = await db.query.courses.findMany({
     where: eq(courses.published, true),
-    orderBy: (courses, { asc }) => [asc(courses.order)],
+    orderBy: [asc(courses.order)],
   });
 
   // ユーザーがアクセス権を持つ講座IDを取得

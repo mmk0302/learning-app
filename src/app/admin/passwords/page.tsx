@@ -1,20 +1,20 @@
 import { db } from "@/db";
 import { coursePasswords, subscriptionPasswords, courses } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, asc, desc } from "drizzle-orm";
 import PasswordManager from "@/components/admin/PasswordManager";
 
 export default async function PasswordsPage() {
   const allCourses = await db.query.courses.findMany({
     where: eq(courses.accessType, "single"),
-    orderBy: (courses, { asc }) => [asc(courses.order)],
+    orderBy: [asc(courses.order)],
   });
 
   const allCoursePasswords = await db.query.coursePasswords.findMany({
-    orderBy: (p, { desc }) => [desc(p.createdAt)],
+    orderBy: [desc(coursePasswords.createdAt)],
   });
 
   const allSubPasswords = await db.query.subscriptionPasswords.findMany({
-    orderBy: (p, { desc }) => [desc(p.createdAt)],
+    orderBy: [desc(subscriptionPasswords.createdAt)],
   });
 
   return (

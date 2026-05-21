@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { db } from "@/db";
 import { courses, sections, videos, courseAccess } from "@/db/schema";
-import { eq, and } from "drizzle-orm";
+import { eq, and, asc } from "drizzle-orm";
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 
@@ -40,16 +40,17 @@ export default async function WatchPage({ params, searchParams }: Props) {
 
   const courseSections = await db.query.sections.findMany({
     where: eq(sections.courseId, courseId),
-    orderBy: (sections, { asc }) => [asc(sections.order)],
+    orderBy: [asc(sections.order)],
     with: {
       videos: {
-        orderBy: (videos, { asc }) => [asc(videos.order)],
+        orderBy: [asc(videos.order)],
       },
     },
   });
 
   // 現在の動画を特定
-  let currentVideo = null;
+  type VideoRow = (typeof courseSections)[number]["videos"][number];
+  let currentVideo: VideoRow | null = null;
   let currentSectionTitle = "";
   for (const section of courseSections) {
     const found = section.videos.find((v) => v.id === videoId);

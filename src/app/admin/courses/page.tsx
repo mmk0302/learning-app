@@ -1,11 +1,12 @@
 import { db } from "@/db";
 import { courses } from "@/db/schema";
+import { asc } from "drizzle-orm";
 import Link from "next/link";
 import DeleteCourseButton from "@/components/admin/DeleteCourseButton";
 
 export default async function AdminCoursesPage() {
   const allCourses = await db.query.courses.findMany({
-    orderBy: (courses, { asc }) => [asc(courses.order)],
+    orderBy: [asc(courses.order)],
   });
 
   return (

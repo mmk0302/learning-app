@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { db } from "@/db";
 import { courses, sections, videos, courseAccess } from "@/db/schema";
-import { eq, and } from "drizzle-orm";
+import { eq, and, asc } from "drizzle-orm";
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 
@@ -43,10 +43,10 @@ export default async function CoursePage({ params }: Props) {
 
   const courseSections = await db.query.sections.findMany({
     where: eq(sections.courseId, courseId),
-    orderBy: (sections, { asc }) => [asc(sections.order)],
+    orderBy: [asc(sections.order)],
     with: {
       videos: {
-        orderBy: (videos, { asc }) => [asc(videos.order)],
+        orderBy: [asc(videos.order)],
       },
     },
   });
