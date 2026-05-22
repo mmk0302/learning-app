@@ -1,11 +1,11 @@
-import { auth } from "@/lib/auth";
+import { mockSession as session } from "@/lib/mock-session";
 import { db } from "@/db";
 import { courses, courseAccess } from "@/db/schema";
 import { eq, and, asc } from "drizzle-orm";
 import CourseCard from "@/components/viewer/CourseCard";
 
 export default async function HomePage() {
-  const session = await auth();
+  
   const user = session!.user;
 
   const allCourses = await db.query.courses.findMany({

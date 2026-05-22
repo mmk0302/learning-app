@@ -1,4 +1,4 @@
-import { auth } from "@/lib/auth";
+import { mockSession as session } from "@/lib/mock-session";
 import { redirect } from "next/navigation";
 import Header from "@/components/viewer/Header";
 
@@ -7,7 +7,7 @@ export default async function ViewerLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = await auth();
+  
 
   if (!session) {
     redirect("/login");

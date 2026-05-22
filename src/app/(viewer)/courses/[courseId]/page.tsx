@@ -1,4 +1,4 @@
-import { auth } from "@/lib/auth";
+import { mockSession as session } from "@/lib/mock-session";
 import { db } from "@/db";
 import { courses, sections, videos, courseAccess } from "@/db/schema";
 import { eq, and, asc } from "drizzle-orm";
@@ -11,7 +11,7 @@ type Props = {
 
 export default async function CoursePage({ params }: Props) {
   const { courseId } = await params;
-  const session = await auth();
+  
   const user = session!.user;
 
   const course = await db.query.courses.findFirst({
