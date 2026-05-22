@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { db } from "@/db";
 import { courses, sections, videos } from "@/db/schema";
 import { eq, asc } from "drizzle-orm";

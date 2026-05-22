@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { db } from "@/db";
 import { courses, users, courseAccess } from "@/db/schema";
 import { count } from "drizzle-orm";

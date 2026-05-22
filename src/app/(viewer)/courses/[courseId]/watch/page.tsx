@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { mockSession as session } from "@/lib/mock-session";
 import { db } from "@/db";
 import { courses, sections, videos, courseAccess } from "@/db/schema";
