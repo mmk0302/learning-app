@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { mockSession as session } from "@/lib/mock-session";
 import { redirect } from "next/navigation";
 import AdminSidebar from "@/components/admin/AdminSidebar";
