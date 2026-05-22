@@ -1,41 +1,9 @@
 import * as schema from "./schema";
 
-let _db: ReturnType<typeof createDbInternal> | null = null;
+const TURSO_URL = process.env.TURSO_DATABASE_URL ?? "";
+const TURSO_TOKEN = process.env.TURSO_AUTH_TOKEN ?? "";
 
-function createBuildTimeDb() {
-  // ビルド時はDBを接続せず、空のPromiseを返すプロキシを返す
-  const emptyResult = () => Promise.resolve([]);
-  const queryProxy: any = new Proxy(
-    {},
-    {
-      get: () =>
-        new Proxy(
-          {},
-          {
-            get: () =>
-              new Proxy(emptyResult, {
-                get: (_t, p) => {
-                  if (p === "then" || p === "catch" || p === "finally") return undefined;
-                  return emptyResult;
-                },
-                apply: () => Promise.resolve([]),
-              }),
-          }
-        ),
-    }
-  );
-  return { query: queryProxy, select: () => ({ from: () => Promise.resolve([{ count: 0 }]) }) } as any;
-}
-
-function createDbInternal() {
-  // ビルドフェーズではDBを接続しない
-  if (process.env.NEXT_PHASE === "phase-production-build") {
-    return createBuildTimeDb();
-  }
-
-  const TURSO_URL = process.env.TURSO_DATABASE_URL ?? "";
-  const TURSO_TOKEN = process.env.TURSO_AUTH_TOKEN ?? "";
-
+function createDb() {
   // 本番: libsql:// または https:// → @libsql/client
   if (TURSO_URL.startsWith("libsql://") || TURSO_URL.startsWith("https://")) {
     const { createClient } = require("@libsql/client");
@@ -51,11 +19,4 @@ function createDbInternal() {
   return drizzle(new Database(path), { schema });
 }
 
-// 遅延初期化: インポート時ではなく最初のアクセス時に DB 接続を確立
-export const db = new Proxy({} as ReturnType<typeof createDbInternal>, {
-  get(_target, prop) {
-    if (!_db) _db = createDbInternal();
-    const val = (_db as any)[prop];
-    return typeof val === "function" ? val.bind(_db) : val;
-  },
-});
+export const db = createDb();
